@@ -31,24 +31,15 @@ impl Default for Root {
 
 impl Root {
     fn feed_internal(&mut self, event: Event, model: &mut crate::model::Model) -> bool {
-        if let Event::Key{key, pressed, ..} = event {
-            if pressed {
-                match key {
-                    Key::P => {
-                        model.toggle_transport();
-                        return true;
-                    }
-                    Key::ArrowLeft => {
-                        model.slowdown();
-                        return true;
-                    }
-                    Key::ArrowRight => {
-                        model.speedup();
-                        return true;
-                    }
-                    _ => { return false; }
-                }
-            }
+        if self.pressed(Key::P, event.clone()) {
+            model.toggle_transport();
+            return true;
+        } else if self.pressed(Key::ArrowLeft, event.clone()) {
+            model.slowdown();
+            return true;
+        } else if self.pressed(Key::ArrowRight, event.clone()) {
+            model.speedup();
+            return true;
         }
         false
     }

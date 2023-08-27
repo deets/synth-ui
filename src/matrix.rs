@@ -21,14 +21,10 @@ impl Default for MatrixView
 
 impl View for MatrixView {
     fn feed(&mut self, event: Event, model: &mut Model) -> bool {
-        if let Event::Key{key, pressed, ..} = event {
-            if pressed {
-                for (i, value) in [Key::Num1, Key::Num2, Key::Num3, Key::Num4, Key::Num5, Key::Num6, Key::Num7].iter().enumerate() {
-                    if key == *value {
-                        model.notes[i] = !model.notes[i];
-                        return true;
-                    }
-                }
+        for (i, value) in [Key::Num1, Key::Num2, Key::Num3, Key::Num4, Key::Num5, Key::Num6, Key::Num7].iter().enumerate() {
+            if self.pressed(*value, event.clone()) {
+                model.notes[i] = !model.notes[i];
+                return true;
             }
         }
         // No consumption by us
