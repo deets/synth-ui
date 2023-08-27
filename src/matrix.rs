@@ -20,40 +20,11 @@ impl View for MatrixView {
     fn feed(&mut self, event: Event, model: &mut Model) -> bool {
         if let Event::Key{key, pressed, ..} = event {
             if pressed {
-                match key {
-                    Key::Num1 => {
-                        model.notes[0] = !model.notes[0];
+                for (i, value) in [Key::Num1, Key::Num2, Key::Num3, Key::Num4, Key::Num5, Key::Num6, Key::Num7].iter().enumerate() {
+                    if key == *value {
+                        model.notes[i] = !model.notes[i];
                         return true;
-                    },
-                    Key::Num2 => {
-                        model.notes[1] = !model.notes[1];
-                        return true;
-                    },
-                    Key::Num3 => {
-                        model.notes[2] = !model.notes[2];
-                        return true;
-                    },
-                    Key::Num4 => {
-                        model.notes[3] = !model.notes[3];
-                        return true;
-                    },
-                    Key::Num5 => {
-                        model.notes[4] = !model.notes[4];
-                        return true;
-                    },
-                    Key::Num6 => {
-                        model.notes[5] = !model.notes[5];
-                        return true;
-                    },
-                    Key::Num7 => {
-                        model.notes[6] = !model.notes[6];
-                        return true;
-                    },
-                    Key::Num8 => {
-                        model.notes[7] = !model.notes[7];
-                        return true;
-                    },
-                    _ => {}
+                    }
                 }
             }
         }
