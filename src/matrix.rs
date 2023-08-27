@@ -44,7 +44,6 @@ impl View for MatrixView {
         let width = self.rect.width();
         let note_count = model.notes.len() as f32;
         let pad_size = (width - (PADDING * (note_count - 1.0))) / note_count ;
-        let desired_size = egui::vec2(width, pad_size);
         let response = ui.allocate_rect(self.rect, egui::Sense::click());
         if ui.is_rect_visible(self.rect) {
             ui.ctx().request_repaint();

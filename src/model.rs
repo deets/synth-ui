@@ -12,6 +12,7 @@ pub enum TransportState
 pub struct Model
 {
     pub bpm: f64,
+    pub volume: f64,
     pub transport: TransportState,
     pub position: usize,
     pub notes: [bool; NOTE_COUNT],
@@ -26,6 +27,7 @@ impl Default for Model
     {
         Self {
             bpm: 120.0,
+            volume: 5.0,
             transport: TransportState::Playing,
             position: 0,
             notes: [false; NOTE_COUNT],
@@ -44,6 +46,27 @@ impl Model {
             },
             _ => {}
         }
+    }
+
+    pub fn speedup(&mut self)
+    {
+        self.bpm = (self.bpm + 1.0).clamp(0.0, 300.0);
+    }
+
+    pub fn slowdown(&mut self)
+    {
+        self.bpm = (self.bpm - 1.0).clamp(0.0, 300.0);
+    }
+
+
+    pub fn pumpup(&mut self)
+    {
+        self.volume = (self.volume + 1.0).clamp(0.0, 11.0);
+    }
+
+    pub fn receive_complaint(&mut self)
+    {
+        self.volume = (self.volume - 1.0).clamp(0.0, 11.0);
     }
 
     pub fn toggle_transport(&mut self)

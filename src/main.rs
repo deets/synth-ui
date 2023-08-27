@@ -5,6 +5,7 @@ mod model;
 mod view;
 mod matrix;
 mod root;
+mod volume;
 
 use eframe::egui;
 use model::Model;
