@@ -9,6 +9,7 @@ use eframe::egui;
 use model::Model;
 use std::cell::RefCell;
 use std::rc::Rc;
+use std::time::Instant;
 
 use view::View;
 use matrix::MatrixView;
@@ -30,18 +31,16 @@ fn main() -> Result<(), eframe::Error> {
 
 
 struct SynthUI {
-    bpm: f32,
-    position: f32,
     model: Model,
+    when: Instant,
     root: Rc<RefCell<dyn View>>,
 }
 
 impl Default for SynthUI {
     fn default() -> Self {
         Self {
-            bpm: 120.0,
-            position: 0.0,
             model: Model::default(),
+            when: Instant::now(),
             root: Rc::new(RefCell::new(MatrixView::new())),
         }
     }
@@ -61,6 +60,10 @@ impl SynthUI {
 
 impl eframe::App for SynthUI {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
+        let now = Instant::now();
+        let elapsed = now - self.when;
+        self.when = now;
+        self.model.update(elapsed);
         self.dispatch_input_keys(ctx);
         egui::CentralPanel::default().show(ctx, |ui| {
             ui.heading("Synth UI");
