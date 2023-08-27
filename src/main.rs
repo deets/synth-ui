@@ -68,7 +68,7 @@ impl eframe::App for SynthUI {
         self.dispatch_input_keys(ctx);
         egui::CentralPanel::default().show(ctx, |ui| {
             ui.heading("Synth UI");
-            matrix::matrix_ui(ui, &self.model);
+            self.root.borrow_mut().ui(ui, &self.model);
         });
     }
 }
