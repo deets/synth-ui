@@ -1,0 +1,25 @@
+[package]
+name = "synth-ui"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+
+# GUI
+eframe = "0.21.3"
+
+# Utility
+lazy_static = "1.4.0"
+crossbeam-channel = "0.5.6"
+chrono = "0.4.24"
+anyhow = "1.0.69"
+# Communication and protocol
+bufstream = "0.1"
+byteorder = "1.4.3"
+bytes = "1.4.0"
+serial2 = "0.1.7"
+hex = "0.4.3"
+libc = "0.2.140"
+# CLI
+clap = "4.2.1"
+
