@@ -4,6 +4,7 @@
 mod model;
 mod view;
 mod matrix;
+mod root;
 
 use eframe::egui;
 use model::Model;
@@ -12,7 +13,7 @@ use std::rc::Rc;
 use std::time::Instant;
 
 use view::View;
-use matrix::MatrixView;
+use root::Root;
 
 
 fn main() -> Result<(), eframe::Error> {
@@ -41,7 +42,7 @@ impl Default for SynthUI {
         Self {
             model: Model::default(),
             when: Instant::now(),
-            root: Rc::new(RefCell::new(MatrixView::new())),
+            root: Rc::new(RefCell::new(Root::default())),
         }
     }
 }

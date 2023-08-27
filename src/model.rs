@@ -45,4 +45,16 @@ impl Model {
             _ => {}
         }
     }
+
+    pub fn toggle_transport(&mut self)
+    {
+        match self.transport {
+            TransportState::Playing => {
+                self.transport = TransportState::Stopped;
+            }
+            TransportState::Stopped => {
+                self.transport = TransportState::Playing;
+            }
+        }
+    }
 }

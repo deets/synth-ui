@@ -9,47 +9,59 @@ pub struct MatrixView
 {
 }
 
+impl Default for MatrixView
+{
+    fn default() -> Self {
+        Self {  }
+    }
+}
+
 impl View for MatrixView {
-    fn feed(&mut self, event: Event, model: &mut Model) {
+    fn feed(&mut self, event: Event, model: &mut Model) -> bool {
         if let Event::Key{key, pressed, ..} = event {
             if pressed {
                 match key {
                     Key::Num1 => {
                         model.notes[0] = !model.notes[0];
+                        return true;
                     },
                     Key::Num2 => {
                         model.notes[1] = !model.notes[1];
+                        return true;
                     },
                     Key::Num3 => {
                         model.notes[2] = !model.notes[2];
+                        return true;
                     },
                     Key::Num4 => {
                         model.notes[3] = !model.notes[3];
+                        return true;
                     },
                     Key::Num5 => {
                         model.notes[4] = !model.notes[4];
+                        return true;
                     },
                     Key::Num6 => {
                         model.notes[5] = !model.notes[5];
+                        return true;
                     },
                     Key::Num7 => {
                         model.notes[6] = !model.notes[6];
+                        return true;
                     },
                     Key::Num8 => {
                         model.notes[7] = !model.notes[7];
+                        return true;
                     },
                     _ => {}
                 }
             }
         }
+        // No consumption by us
+        false
     }
 }
 
-impl MatrixView {
-    pub fn new() -> MatrixView {
-        MatrixView {  }
-    }
-}
 
 pub fn matrix_ui(ui: &mut egui::Ui, model: &Model) -> egui::Response {
     let black = Color32::from_rgba_unmultiplied(0, 0, 0, 255);
