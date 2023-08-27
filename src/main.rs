@@ -1,10 +1,12 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")] // hide console window on Windows in release
 #![feature(let_chains)]
 
+mod model;
 mod view;
 mod matrix;
 
 use eframe::egui;
+use model::Model;
 use std::cell::RefCell;
 use std::rc::Rc;
 
@@ -30,6 +32,7 @@ fn main() -> Result<(), eframe::Error> {
 struct SynthUI {
     bpm: f32,
     position: f32,
+    model: Model,
     root: Rc<RefCell<dyn View>>,
 }
 
@@ -38,6 +41,7 @@ impl Default for SynthUI {
         Self {
             bpm: 120.0,
             position: 0.0,
+            model: Model::default(),
             root: Rc::new(RefCell::new(MatrixView::new())),
         }
     }
@@ -49,7 +53,7 @@ impl SynthUI {
     {
         ctx.input(|i| {
             for event in &i.events {
-                self.root.borrow_mut().feed(event.clone());
+                self.root.borrow_mut().feed(event.clone(), &mut self.model);
             }
         });
     }
@@ -60,7 +64,7 @@ impl eframe::App for SynthUI {
         self.dispatch_input_keys(ctx);
         egui::CentralPanel::default().show(ctx, |ui| {
             ui.heading("Synth UI");
-            matrix::matrix_ui(ui);
+            matrix::matrix_ui(ui, &self.model);
         });
     }
 }
