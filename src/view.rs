@@ -40,6 +40,21 @@ pub trait View {
         // By default, all views are active.
         true
     }
+
+    // In views that are toggled, this
+    // method should be called before activation
+    // to allow configuration.
+    fn activate(&mut self, model: &Model)
+    {
+    }
+
+    // When becoming deactivated, the parent
+    // view should inform the child about this, so
+    // e.g. model updates can be applied.
+    fn deactivate(&self, model: &mut Model)
+    {
+    }
+
 }
 
 pub struct MomentaryTimedView {
@@ -47,13 +62,14 @@ pub struct MomentaryTimedView {
     key: Key,
     timeout: Duration,
     until: Instant,
+    deactivated: bool,
 }
 
 impl MomentaryTimedView {
     pub fn new(view: Rc<RefCell<dyn View>>, key: Key, timeout: Duration) -> Self
     {
         Self {
-            view, key, timeout, until: Instant::now()
+            view, key, timeout, until: Instant::now(), deactivated: false
         }
     }
 }
@@ -64,12 +80,19 @@ impl View for MomentaryTimedView
     fn feed(&mut self, event: Event, model: &mut Model) -> bool {
         if self.pressed(self.key, event.clone()) {
             self.until = Instant::now() + self.timeout;
+            self.view.borrow_mut().activate(model);
+            self.deactivated = false;
             return true
         } else if self.active() {
+            // prolong the activation period
             if self.view.borrow_mut().feed(event, model) {
                 self.until = Instant::now() + self.timeout;
                 return true;
             }
+        }
+        if !self.active() && !self.deactivated {
+            self.view.borrow_mut().deactivate(model);
+            self.deactivated = true;
         }
         return false;
     }
@@ -111,9 +134,11 @@ impl View for MomentaryView
         if self.used(self.key, event.clone()) {
             if self.pressed(self.key, event.clone()) {
                 self.active = true;
+                self.view.borrow_mut().activate(model);
                 return true
             } else {
                 self.active = false;
+                self.view.borrow_mut().deactivate(model);
                 return true
             }
         } if self.active {
@@ -176,7 +201,7 @@ impl View for ViewContainer
 }
 
 pub struct MutexViewContainer {
-    views: Vec<Rc<RefCell<dyn View>>>
+    pub views: Vec<Rc<RefCell<dyn View>>>
 }
 
 impl MutexViewContainer {
@@ -192,8 +217,10 @@ impl MutexViewContainer {
 }
 impl View for MutexViewContainer {
     fn feed(&mut self, event: Event, model: &mut Model) -> bool {
-        if let Some(view) =  self.active_view() {
-            return view.borrow_mut().feed(event, model)
+        for view in &self.views {
+            if view.borrow_mut().feed(event.clone(), model) {
+                return true
+            }
         }
         false
     }

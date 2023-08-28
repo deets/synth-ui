@@ -5,7 +5,7 @@ use rand::{
 }; // 0.8.0
 
 
-const NOTE_COUNT:usize = 8;
+pub const NOTE_COUNT:usize = 8;
 
 #[derive(Copy, Clone)]
 pub enum Note {
