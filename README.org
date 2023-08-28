@@ -1,0 +1,81 @@
+* Synth UI - a small device UI framework demonstration
+
+This is a little example project that was created as exercise in Rust
+following [[https://www.reddit.com/r/embedded/comments/15zj7uk/looking_for_resources_for_complex_menu_design_for/][this Reddit discussion.]]
+
+It's purpose is to illustrate an approach of view rendering and model
+manipulation based on physical interaction with a musical device.
+
+I'm not good at Rust yet, so I chose Rust as language to get a bit
+better in it.
+
+** Concepts
+
+There are three main components in this project:
+
+ - Events, created by physical interaction of the user.
+ - Model, the data that drives the application.
+ - Views, who are rendered based on the model, and translate the
+   events into changes of the model.
+
+*** Events
+
+Events are created by interaction with physical components, like
+pressing a button, turning a knob or encoder. The system feeds a
+stream of events one by one into the view hierarchy.
+
+I chose simple key-presses (1-8 for the notes, ArrowLeft/Right, V for
+volume, P for play/pause), but in a real world example these would
+probably correspond to the device elements. For a real-world example
+on what this could look like, look at [[https://github.com/Ableton/push-interface/blob/master/doc/AbletonPush2MIDIDisplayInterface.asc][Ableton Push2 Midi Map]].
+
+*** Model
+
+The model represents the state the system is in. In our case it is the
+BPM for note playback, the 8 sequencable notes, volume from 0..11.
+
+Interaction should affect the model, and the model should then affect
+the output of the device. Both visually, but also of course the sound
+it makes.
+
+*** Views
+
+This is at the core of this project. The idea here is a bit different
+to classic UI frameworks, that are pointer-driven and run with a lot
+of screen real estate and dynamic models.
+
+Our views form a fixed hierarchy. All views are always present. If
+they are *shown* depends on the user interaction. Thus classic
+approaches to interaction are available: MomentaryTimedView and
+MomentaryView appear on keys-strokes, and either disappear
+automatically, or when a button is released.
+
+Views consume events to affect their visibility, and the model
+state. This event consumption is meant to work from a "visibly
+first"-perspective, meaning that a view on top of another view gets
+events first. A concrete example: arrow left and right control the BPM
+if nothing else is active. But when you press (and hold!) 1-8, the
+NoteSelectionView pops up. Then the arrow keys make a selection also
+based on arrow left/right.
+
+Thus the feed-method allows a view to indicate that it consumed an
+event. It won't propagate to other views anymore.
+
+Rendering then is done bottom-up, to allow temporary views to appear
+on top of the root view.
+
+**** On the genericity of Views
+
+I chose a simple UI-framework and thus pixels on a screen for this
+example. However the concept of a view goes beyond that. All elements
+of a device are part of the view. RGB-LEDs, 7-segment-displays,
+and whatever else you can think of.
+
+If we take the Ableton Push 2 as example, this becomes obvious: when
+in a musical instrument, the main pads show the chosen scale as notes
+that can be played. When a drum-kit is shown, instead the 4x4 lower
+left corner shows the available sounds.
+
+When in [[https://www.ableton.com/en/manual/using-push-2/#16-velocities-mode][16-Velocity-Mode]] parts of the the pad grid are overlaid with a
+velocity selection. This represents the composition approach shown
+here.
